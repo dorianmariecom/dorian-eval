@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dorian-to_struct (1.0.1)
+    dorian-eval (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -94,7 +94,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  dorian-to_struct!
+  dorian-eval!
   rspec
   rubocop-rails-omakase
 

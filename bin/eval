@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "dorian/arguments"
+require_relative "../lib/dorian/eval"
+
+parsed = Dorian::Arguments.parse(
+  it: { type: :string, alias: :i },
+  debug: { alias: :d },
+  stdout: { aliases: [:out, :o], default: true },
+  stderr: { aliases: [:err, :e], default: true },
+  colorize: { aliases: [:color, :c], default: true },
+  version: { alias: :v }, help: { alias: :h }
+)
+
+abort parsed.help if parsed.options.help
+
+if parsed.options.version
+  abort File.read(File.expand_path("../../VERSION", __FILE__))
+end
+
+Dorian::Eval.eval(
+  ruby: parsed.arguments.join(" "),
+  it: parsed.options.it,
+  debug: parsed.options.debug,
+  stdout: parsed.options.stdout,
+  stderr: parsed.options.stderr,
+  colorize: parsed.options.colorize
+)
