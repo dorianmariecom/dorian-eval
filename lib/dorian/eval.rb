@@ -2,11 +2,7 @@ class Dorian
   class Eval
     attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize
 
-    COLORS = {
-      red: "\e[31m",
-      green: "\e[32m",
-      reset: "\e[0m"
-    }
+    COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }
 
     def initialize(
       *args,

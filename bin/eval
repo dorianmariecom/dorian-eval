@@ -4,14 +4,34 @@
 require "dorian/arguments"
 require_relative "../lib/dorian/eval"
 
-parsed = Dorian::Arguments.parse(
-  it: { type: :string, alias: :i },
-  debug: { alias: :d },
-  stdout: { aliases: [:out, :o], default: true },
-  stderr: { aliases: [:err, :e], default: true },
-  colorize: { aliases: [:color, :c], default: true },
-  version: { alias: :v }, help: { alias: :h }
-)
+parsed =
+  Dorian::Arguments.parse(
+    it: {
+      type: :string,
+      alias: :i
+    },
+    debug: {
+      alias: :d
+    },
+    stdout: {
+      aliases: %i[out o],
+      default: true
+    },
+    stderr: {
+      aliases: %i[err e],
+      default: true
+    },
+    colorize: {
+      aliases: %i[color c],
+      default: true
+    },
+    version: {
+      alias: :v
+    },
+    help: {
+      alias: :h
+    }
+  )
 
 abort parsed.help if parsed.options.help
 
