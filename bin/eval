@@ -25,6 +25,9 @@ parsed =
       aliases: %i[color c],
       default: true
     },
+    rails: {
+      alias: :r
+    },
     version: {
       alias: :v
     },
@@ -45,5 +48,6 @@ Dorian::Eval.eval(
   debug: parsed.options.debug,
   stdout: parsed.options.stdout,
   stderr: parsed.options.stderr,
-  colorize: parsed.options.colorize
+  colorize: parsed.options.colorize,
+  rails: parsed.options.rails
 )

@@ -1,6 +1,6 @@
 class Dorian
   class Eval
-    attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize
+    attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize, :rails
 
     COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }
 
@@ -11,7 +11,8 @@ class Dorian
       debug: false,
       stdout: true,
       stderr: true,
-      colorize: false
+      colorize: false,
+      rails: false
     )
       @ruby = ruby.empty? ? args.join(" ") : ruby
       @it = it
@@ -19,6 +20,7 @@ class Dorian
       @stdout = !!stdout
       @stderr = !!stderr
       @colorize = !!colorize
+      @rails = !!rails
     end
 
     def self.eval(...)
@@ -29,15 +31,7 @@ class Dorian
       read_out, write_out = IO.pipe
       read_err, write_err = IO.pipe
 
-      Process.spawn(
-        RbConfig.ruby,
-        "-e",
-        "it = #{it.inspect}",
-        "-e",
-        ruby,
-        out: write_out,
-        err: write_err
-      )
+      spawn(write_out:, write_err:)
 
       write_out.close
       write_err.close
@@ -69,8 +63,36 @@ class Dorian
       !!colorize
     end
 
+    def rails?
+      !!rails
+    end
+
     def prefix
       debug? ? "[#{it}] " : ""
+    end
+
+    def full_ruby
+      full_ruby = <<~RUBY
+        it = #{it.inspect}
+        #{ruby}
+      RUBY
+
+      full_ruby = <<~RUBY if rails?
+        require "#{Dir.pwd}/config/environment"
+        #{full_ruby}
+      RUBY
+
+      full_ruby
+    end
+
+    def spawn(write_out:, write_err:)
+      Process.spawn(
+        RbConfig.ruby,
+        "-e",
+        full_ruby,
+        out: write_out,
+        err: write_err
+      )
     end
 
     def gets(read, color: nil, print: true)
