@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class Dorian
   class Eval
     attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize, :rails
 
-    COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }
+    COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }.freeze
 
     def initialize(
       *args,
@@ -16,10 +18,10 @@ class Dorian
     )
       @ruby = ruby.empty? ? args.join(" ") : ruby
       @it = it
-      @debug = !!debug
-      @stdout = !!stdout
-      @stderr = !!stderr
-      @colorize = !!colorize
+      @debug = !debug.nil?
+      @stdout = !stdout.nil?
+      @stderr = !stderr.nil?
+      @colorize = !colorize.nil?
       @rails = !!rails
     end
 
@@ -98,9 +100,10 @@ class Dorian
     def gets(read, color: nil, print: true)
       original_string = read.gets
       return unless original_string
+
       string = original_string.rstrip
       string = colorize? ? colorize_string(string, color) : string
-      puts([prefix, string].join) if print
+      Rails.logger.debug([prefix, string].join) if print
       original_string
     end
 
