@@ -102,7 +102,7 @@ class Dorian
       return unless original_string
 
       string = original_string.rstrip
-      string = colorize? ? colorize_string(string, color) : string
+      string = colorize_string(string, color) if colorize?
       Rails.logger.debug([prefix, string].join) if print
       original_string
     end
