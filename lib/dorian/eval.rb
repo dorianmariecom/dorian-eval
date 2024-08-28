@@ -18,10 +18,10 @@ class Dorian
     )
       @ruby = ruby.empty? ? args.join(" ") : ruby
       @it = it
-      @debug = !debug.nil?
-      @stdout = !stdout.nil?
-      @stderr = !stderr.nil?
-      @colorize = !colorize.nil?
+      @debug = !!debug
+      @stdout = !!stdout
+      @stderr = !!stderr
+      @colorize = !!colorize
       @rails = !!rails
     end
 
@@ -42,8 +42,8 @@ class Dorian
       err = ""
 
       while !read_out.eof? || !read_err.eof?
-        out << gets(read_out, color: :green, print: stdout?).to_s
-        err << gets(read_err, color: :red, print: stderr?).to_s
+        out += gets(read_out, color: :green, print: stdout?, method: :puts).to_s
+        err += gets(read_err, color: :red, print: stderr?, method: :warn).to_s
       end
 
       [out, err]
@@ -97,18 +97,22 @@ class Dorian
       )
     end
 
-    def gets(read, color: nil, print: true)
+    def gets(read, color: nil, print: true, method: :puts)
       original_string = read.gets
       return unless original_string
 
       string = original_string.rstrip
       string = colorize_string(string, color) if colorize?
-      Rails.logger.debug([prefix, string].join) if print
+      if method == :puts && print
+        Rails.logger.debug [prefix, string].join
+      elsif method == :warn && print
+        warn [prefix, string].join
+      end
       original_string
     end
 
     def colorize_string(string, color)
-      [COLORS.fetch(color), string, COLORS.fetch(:reset)]
+      [COLORS.fetch(color), string, COLORS.fetch(:reset)].join
     end
   end
 end
