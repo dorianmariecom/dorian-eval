@@ -112,3 +112,5 @@ require:
   - rubocop-rspec
   - rubocop-rspec_rails
   - rubocop-capybara
+Rails/Output:
+  Enabled: false

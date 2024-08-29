@@ -42,7 +42,7 @@ class Dorian
       err = ""
 
       while !read_out.eof? || !read_err.eof?
-        out += gets(read_out, color: :green, print: stdout?, method: :puts).to_s
+        out += gets(read_out, print: stdout?, method: :puts).to_s
         err += gets(read_err, color: :red, print: stderr?, method: :warn).to_s
       end
 
@@ -102,16 +102,20 @@ class Dorian
       return unless original_string
 
       string = original_string.rstrip
-      string = colorize_string(string, color) if colorize?
+      string = colorize_string(string, color) if colorize? && color
+
       if method == :puts && print
-        Rails.logger.debug [prefix, string].join
+        puts [prefix, string].join
       elsif method == :warn && print
         warn [prefix, string].join
       end
+
       original_string
     end
 
     def colorize_string(string, color)
+      return string unless color
+
       [COLORS.fetch(color), string, COLORS.fetch(:reset)].join
     end
   end
