@@ -78,6 +78,8 @@ Rails/HelperInstanceVariable:
   Enabled: false
 Rails/NegateInclude:
   Enabled: false
+Rails/Output:
+  Enabled: false
 Rails/Present:
   Enabled: false
 Rails/ThreeStateBooleanColumn:
@@ -112,5 +114,3 @@ require:
   - rubocop-rspec
   - rubocop-rspec_rails
   - rubocop-capybara
-Rails/Output:
-  Enabled: false
