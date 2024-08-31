@@ -1,28 +1,33 @@
 # frozen_string_literal: true
 
+require "yaml"
+
 class Dorian
   class Eval
-    attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize, :rails
+    Return = Data.define(:stdout, :stderr, :returned)
+
+    attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize, :rails, :returns
 
     COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }.freeze
 
     def initialize(
-      *args,
-      ruby: "",
-      it: "",
+      ruby: nil,
+      it: nil,
       debug: false,
       stdout: true,
       stderr: true,
       colorize: false,
-      rails: false
+      rails: false,
+      returns: false
     )
-      @ruby = ruby.empty? ? args.join(" ") : ruby
-      @it = it
+      @ruby = ruby.to_s.empty? ? "nil" : ruby
+      @it = it.to_s.empty? ? nil : it
       @debug = !!debug
       @stdout = !!stdout
       @stderr = !!stderr
       @colorize = !!colorize
       @rails = !!rails
+      @returns = !!returns
     end
 
     def self.eval(...)
@@ -46,7 +51,11 @@ class Dorian
         err += gets(read_err, color: :red, print: stderr?, method: :warn).to_s
       end
 
-      [out, err]
+      if returns?
+        Return.new(stdout: out, stderr: err, returned: YAML.safe_load(out))
+      else
+        Return.new(stdout: out, stderr: err, returned: nil)
+      end
     end
 
     def debug?
@@ -69,15 +78,28 @@ class Dorian
       !!rails
     end
 
+    def returns?
+      !!returns
+    end
+
     def prefix
-      debug? ? "[#{it}] " : ""
+      debug? && !returns? && it ? "[#{it}] " : ""
     end
 
     def full_ruby
-      full_ruby = <<~RUBY
-        it = #{it.inspect}
-        #{ruby}
-      RUBY
+      if returns?
+        full_ruby = <<~RUBY
+          require "yaml"
+
+          it = #{it.inspect}
+          puts (#{ruby}).to_yaml
+        RUBY
+      else
+        full_ruby = <<~RUBY
+          it = #{it.inspect}
+          #{ruby}
+        RUBY
+      end
 
       full_ruby = <<~RUBY if rails?
         require "#{Dir.pwd}/config/environment"
