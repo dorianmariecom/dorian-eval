@@ -28,6 +28,8 @@ parsed =
     rails: {
       alias: :r
     },
+    returns: { alias: :return },
+    fast: { alias: :f },
     version: {
       alias: :v
     },
@@ -49,5 +51,7 @@ Dorian::Eval.eval(
   stdout: parsed.options.stdout,
   stderr: parsed.options.stderr,
   colorize: parsed.options.colorize,
-  rails: parsed.options.rails
+  rails: parsed.options.rails,
+  returns: parsed.options.returns,
+  fast: parsed.options.fast
 )

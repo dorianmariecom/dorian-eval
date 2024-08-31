@@ -4,7 +4,11 @@ require "yaml"
 
 class Dorian
   class Eval
-    Return = Data.define(:stdout, :stderr, :returned)
+    Return = Data.define(:stdout, :stderr, :returned) do
+      def initialize(stdout: "", stderr: "", returned: nil)
+        super(stdout:, stderr:, returned:)
+      end
+    end
 
     attr_reader :ruby,
                 :it,
@@ -13,7 +17,8 @@ class Dorian
                 :stderr,
                 :colorize,
                 :rails,
-                :returns
+                :returns,
+                :fast
 
     COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }.freeze
 
@@ -25,7 +30,8 @@ class Dorian
       stderr: true,
       colorize: false,
       rails: false,
-      returns: false
+      returns: false,
+      fast: false
     )
       @ruby = ruby.to_s.empty? ? "nil" : ruby
       @it = it.to_s.empty? ? nil : it
@@ -35,6 +41,7 @@ class Dorian
       @colorize = !!colorize
       @rails = !!rails
       @returns = !!returns
+      @fast = !!fast
     end
 
     def self.eval(...)
@@ -42,6 +49,14 @@ class Dorian
     end
 
     def eval
+      fast? ? eval_fast : eval_slow
+    end
+
+    def eval_fast
+      Return.new(returned: Kernel.eval(full_ruby))
+    end
+
+    def eval_slow
       read_out, write_out = IO.pipe
       read_err, write_err = IO.pipe
 
@@ -61,8 +76,12 @@ class Dorian
       if returns?
         Return.new(stdout: out, stderr: err, returned: YAML.safe_load(out))
       else
-        Return.new(stdout: out, stderr: err, returned: nil)
+        Return.new(stdout: out, stderr: err)
       end
+    end
+
+    def fast?
+      !!fast
     end
 
     def debug?
@@ -110,10 +129,14 @@ class Dorian
       end
     end
 
+    def slow?
+      !fast?
+    end
+
     def full_ruby
       full_ruby = "it = #{to_ruby(it)}\n"
       full_ruby +=
-        if returns?
+        if returns? && slow?
           <<~RUBY
             require "yaml"
             puts (#{ruby}).to_yaml

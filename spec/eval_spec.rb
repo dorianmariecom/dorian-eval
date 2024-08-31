@@ -18,5 +18,15 @@ RSpec.describe "eval" do
     expect(result.stdout).to eq("---\n")
     expect(result.stderr).to eq("")
     expect(result.returned).to be_nil
+
+    result = Dorian::Eval.eval(ruby: "1 + 1", fast: true)
+    expect(result.stdout).to eq("")
+    expect(result.stderr).to eq("")
+    expect(result.returned).to eq(2)
+
+    result = Dorian::Eval.eval(ruby: "1 + 1", fast: true, returns: true)
+    expect(result.stdout).to eq("")
+    expect(result.stderr).to eq("")
+    expect(result.returned).to eq(2)
   end
 end
