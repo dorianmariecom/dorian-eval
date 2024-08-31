@@ -93,20 +93,36 @@ class Dorian
       debug? && !returns? && it ? "[#{it}] " : ""
     end
 
+    def to_ruby(ruby)
+      if ruby.is_a?(Struct)
+        keys = ruby.to_h.keys.map { |key| to_ruby(key) }
+        values = ruby.to_h.values.map { |value| to_ruby(value) }
+        "Struct.new(#{keys.join(", ")}).new(#{values.join(", ")})"
+      elsif ruby.is_a?(String) || ruby.is_a?(Symbol) || ruby.is_a?(NilClass) ||
+        ruby.is_a?(TrueClass) || ruby.is_a?(FalseClass) || ruby.is_a?(Float) ||
+        ruby.is_a?(Integer)
+        ruby.inspect
+      elsif ruby.is_a?(Array)
+        "[#{ruby.map { |element| to_ruby(element) }.join(", ")}]"
+      elsif ruby.is_a?(Hash)
+        "{#{ruby.map { |key, value| "#{to_ruby(key)} => #{to_ruby(value)}" }}}"
+      else
+        raise "#{ruby.class} not supported"
+      end
+    end
+
     def full_ruby
-      full_ruby =
+      full_ruby = "it = #{to_ruby(it)}\n"
+      full_ruby +=
         if returns?
           <<~RUBY
-          require "yaml"
-
-          it = #{it.inspect}
-          puts (#{ruby}).to_yaml
-        RUBY
+            require "yaml"
+            puts (#{ruby}).to_yaml
+          RUBY
         else
           <<~RUBY
-          it = #{it.inspect}
-          #{ruby}
-        RUBY
+            #{ruby}
+          RUBY
         end
 
       full_ruby = <<~RUBY if rails?
