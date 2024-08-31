@@ -94,17 +94,16 @@ class Dorian
     end
 
     def to_ruby(ruby)
-      if ruby.is_a?(Struct)
+      case ruby
+      when Struct
         keys = ruby.to_h.keys.map { |key| to_ruby(key) }
         values = ruby.to_h.values.map { |value| to_ruby(value) }
         "Struct.new(#{keys.join(", ")}).new(#{values.join(", ")})"
-      elsif ruby.is_a?(String) || ruby.is_a?(Symbol) || ruby.is_a?(NilClass) ||
-        ruby.is_a?(TrueClass) || ruby.is_a?(FalseClass) || ruby.is_a?(Float) ||
-        ruby.is_a?(Integer)
+      when String, Symbol, NilClass, TrueClass, FalseClass, Float, Integer
         ruby.inspect
-      elsif ruby.is_a?(Array)
+      when Array
         "[#{ruby.map { |element| to_ruby(element) }.join(", ")}]"
-      elsif ruby.is_a?(Hash)
+      when Hash
         "{#{ruby.map { |key, value| "#{to_ruby(key)} => #{to_ruby(value)}" }}}"
       else
         raise "#{ruby.class} not supported"
