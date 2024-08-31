@@ -6,7 +6,14 @@ class Dorian
   class Eval
     Return = Data.define(:stdout, :stderr, :returned)
 
-    attr_reader :ruby, :it, :debug, :stdout, :stderr, :colorize, :rails, :returns
+    attr_reader :ruby,
+                :it,
+                :debug,
+                :stdout,
+                :stderr,
+                :colorize,
+                :rails,
+                :returns
 
     COLORS = { red: "\e[31m", green: "\e[32m", reset: "\e[0m" }.freeze
 
@@ -87,19 +94,20 @@ class Dorian
     end
 
     def full_ruby
-      if returns?
-        full_ruby = <<~RUBY
+      full_ruby =
+        if returns?
+          <<~RUBY
           require "yaml"
 
           it = #{it.inspect}
           puts (#{ruby}).to_yaml
         RUBY
-      else
-        full_ruby = <<~RUBY
+        else
+          <<~RUBY
           it = #{it.inspect}
           #{ruby}
         RUBY
-      end
+        end
 
       full_ruby = <<~RUBY if rails?
         require "#{Dir.pwd}/config/environment"
