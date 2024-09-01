@@ -6,7 +6,7 @@ class Dorian
   class Eval
     Return = Data.define(:stdout, :stderr, :returned) do
       def initialize(stdout: "", stderr: "", returned: nil)
-        super(stdout:, stderr:, returned:)
+        super
       end
     end
 
