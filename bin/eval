@@ -28,8 +28,12 @@ parsed =
     rails: {
       alias: :r
     },
-    returns: { alias: :return },
-    fast: { alias: :f },
+    returns: {
+      alias: :return
+    },
+    fast: {
+      alias: :f
+    },
     version: {
       alias: :v
     },

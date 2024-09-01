@@ -4,11 +4,12 @@ require "yaml"
 
 class Dorian
   class Eval
-    Return = Data.define(:stdout, :stderr, :returned) do
-      def initialize(stdout: "", stderr: "", returned: nil)
-        super
+    Return =
+      Data.define(:stdout, :stderr, :returned) do
+        def initialize(stdout: "", stderr: "", returned: nil)
+          super
+        end
       end
-    end
 
     attr_reader :ruby,
                 :it,
