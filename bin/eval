@@ -48,14 +48,14 @@ if parsed.options.version
   abort File.read(File.expand_path("../VERSION", __dir__))
 end
 
-Dorian::Eval.eval(
-  ruby: parsed.arguments.join(" "),
-  it: parsed.options.it,
-  debug: parsed.options.debug,
-  stdout: parsed.options.stdout,
-  stderr: parsed.options.stderr,
-  colorize: parsed.options.colorize,
-  rails: parsed.options.rails,
-  returns: parsed.options.returns,
-  fast: parsed.options.fast
-)
+p Dorian::Eval.eval(
+    ruby: parsed.arguments.join(" "),
+    it: parsed.options.it,
+    debug: parsed.options.debug,
+    stdout: parsed.options.stdout,
+    stderr: parsed.options.stderr,
+    colorize: parsed.options.colorize,
+    rails: parsed.options.rails,
+    returns: parsed.options.returns,
+    fast: parsed.options.fast
+  )
