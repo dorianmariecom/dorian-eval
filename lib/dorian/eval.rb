@@ -69,17 +69,26 @@ class Dorian
       out = ""
       err = ""
 
-      thread_out = Thread.new do
-        until read_out.eof?
-          out += gets(read_out, print: stdout?, method: :puts).to_s
+      thread_out =
+        Thread.new do
+          out +=
+            gets(
+              read_out,
+              print: stdout?,
+              method: :puts
+            ).to_s until read_out.eof?
         end
-      end
 
-      thread_err = Thread.new do
-        until read_err.eof?
-          err += gets(read_err, color: :red, print: stderr?, method: :warn).to_s
+      thread_err =
+        Thread.new do
+          err +=
+            gets(
+              read_err,
+              color: :red,
+              print: stderr?,
+              method: :warn
+            ).to_s until read_err.eof?
         end
-      end
 
       thread_out.join
       thread_err.join
