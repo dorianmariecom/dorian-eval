@@ -69,10 +69,20 @@ class Dorian
       out = ""
       err = ""
 
-      while !read_out.eof? || !read_err.eof?
-        out += gets(read_out, print: stdout?, method: :puts).to_s
-        err += gets(read_err, color: :red, print: stderr?, method: :warn).to_s
+      thread_out = Thread.new do
+        until read_out.eof?
+          out += gets(read_out, print: stdout?, method: :puts).to_s
+        end
       end
+
+      thread_err = Thread.new do
+        until read_err.eof?
+          err += gets(read_err, color: :red, print: stderr?, method: :warn).to_s
+        end
+      end
+
+      thread_out.join
+      thread_err.join
 
       if returns?
         Return.new(stdout: out, stderr: err, returned: YAML.safe_load(out))
