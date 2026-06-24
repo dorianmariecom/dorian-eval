@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name = "dorian-eval"
   s.version = File.read("VERSION").strip
   s.summary = "evaluates ruby"
-  s.description = s.summary
+  s.description = "Helpers and executable for evaluating Ruby snippets."
   s.authors = ["Dorian Marié"]
   s.email = "dorian@dorianmarie.com"
   s.files = %w[lib/dorian-eval.rb lib/dorian/eval.rb bin/eval VERSION]
@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
   s.license = "MIT"
   s.metadata = { "rubygems_mfa_required" => "true" }
   s.required_ruby_version = ">= 3.0"
-  s.add_dependency "yaml"
+  s.add_dependency "yaml", ">= 0.3", "< 1"
 end

@@ -5,7 +5,7 @@ require "yaml"
 class Dorian
   class Eval
     Return =
-      Data.define(:stdout, :stderr, :returned) do
+      Struct.new(:stdout, :stderr, :returned, keyword_init: true) do
         def initialize(stdout: "", stderr: "", returned: nil)
           super
         end
@@ -61,7 +61,7 @@ class Dorian
       read_out, write_out = IO.pipe
       read_err, write_err = IO.pipe
 
-      spawn(write_out:, write_err:)
+      spawn(write_out: write_out, write_err: write_err)
 
       write_out.close
       write_err.close

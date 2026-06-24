@@ -110,6 +110,8 @@ Style/EmptyMethod:
   Enabled: false
 Style/IfUnlessModifier:
   Enabled: false
+Style/ItAssignment:
+  Enabled: false
 Style/MultilineBlockChain:
   Enabled: false
 Style/NestedTernaryOperator:
